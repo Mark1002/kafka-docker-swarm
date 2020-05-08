@@ -74,6 +74,8 @@ services:
       KAFKA_REST_HOST_NAME: "rest-proxy"
     depends_on:
       - "kafka0"
+      - "kafka1"
+      - "kafka2"
     networks:
       - kafka-net
 
