@@ -7,9 +7,13 @@ services:
       - "9087:9000"
     environment:
       ZK_HOSTS: "zookeeper:2181"
-      command: -Dpidfile.path=/dev/null
+      APPLICATION_SECRET: "iwannaknow"
+    command: -Dpidfile.path=/dev/null
     depends_on:
       - "zookeeper"
+      - "kafka0"
+      - "kafka1"
+      - "kafka2"
     networks:
       - kafka-net
 
