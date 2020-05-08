@@ -1,6 +1,18 @@
 version: '3.4'
 
 services:
+  kafka-manager:
+    image: hlebalbau/kafka-manager:stable
+    ports:
+      - "9087:9000"
+    environment:
+      ZK_HOSTS: "zookeeper:2181"
+      command: -Dpidfile.path=/dev/null
+    depends_on:
+      - "zookeeper"
+    networks:
+      - kafka-net
+
   zookeeper:
     image: confluentinc/cp-zookeeper:5.2.2
     ports:
