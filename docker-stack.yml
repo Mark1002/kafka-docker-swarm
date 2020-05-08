@@ -20,7 +20,6 @@ services:
       KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka0:19092,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092"
       KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
     depends_on:
       - "zookeeper"
     deploy:
@@ -28,13 +27,49 @@ services:
         constraints: [node.hostname == $NODE0_HOST_NAME]
     networks:
       - kafka-net
-  
+
+  kafka1:
+    image: confluentinc/cp-kafka:5.2.2
+    ports:
+      - "9093:9093"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka1:19093,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9093"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"
+    depends_on:
+      - "zookeeper"
+    deploy:
+      placement:
+        constraints: [node.hostname == $NODE1_HOST_NAME]
+    networks:
+      - kafka-net
+
+  kafka2:
+    image: confluentinc/cp-kafka:5.2.2
+    ports:
+      - "9094:9094"
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka2:19094,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9094"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"
+    depends_on:
+      - "zookeeper"
+    deploy:
+      placement:
+        constraints: [node.hostname == $NODE2_HOST_NAME]
+    networks:
+      - kafka-net
+
   rest-proxy:
     image: confluentinc/cp-kafka-rest:5.2.2
     ports:
       - "8082:8082"
     environment:
-      KAFKA_REST_BOOTSTRAP_SERVERS: "PLAINTEXT://kafka0:19092"
+      KAFKA_REST_BOOTSTRAP_SERVERS: "PLAINTEXT://kafka0:19092,PLAINTEXT://kafka1:19093,PLAINTEXT://kafka2:19094"
       KAFKA_REST_LISTENERS: "http://0.0.0.0:8082/"
       KAFKA_REST_HOST_NAME: "rest-proxy"
     depends_on:
