@@ -2,13 +2,12 @@ version: '3.4'
 
 services:
   kafka-manager:
-    image: hlebalbau/kafka-manager:stable
+    image: trivadisbds/kafka-manager
     ports:
       - "9087:9000"
     environment:
       ZK_HOSTS: "zookeeper:2181"
       APPLICATION_SECRET: "iwannaknow"
-    command: -Dpidfile.path=/dev/null
     depends_on:
       - "zookeeper"
       - "kafka0"
