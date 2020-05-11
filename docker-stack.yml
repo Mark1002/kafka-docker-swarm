@@ -22,8 +22,14 @@ services:
       - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: "2181"
+    deploy:
+      placement:
+        constraints: [node.hostname == $NODE0_HOST_NAME]
     networks:
       - kafka-net
+    volumes:
+      - zk-data0:/var/lib/zookeeper/data
+      - zk-txn-logs0:/var/lib/zookeeper/log
 
   kafka0:
     image: confluentinc/cp-kafka:5.5.0
@@ -42,6 +48,8 @@ services:
         constraints: [node.hostname == $NODE0_HOST_NAME]
     networks:
       - kafka-net
+    volumes:
+      - kafka-data0:/var/lib/kafka/data
 
   kafka1:
     image: confluentinc/cp-kafka:5.5.0
@@ -60,6 +68,8 @@ services:
         constraints: [node.hostname == $NODE1_HOST_NAME]
     networks:
       - kafka-net
+    volumes:
+      - kafka-data1:/var/lib/kafka/data
 
   kafka2:
     image: confluentinc/cp-kafka:5.5.0
@@ -78,6 +88,8 @@ services:
         constraints: [node.hostname == $NODE2_HOST_NAME]
     networks:
       - kafka-net
+    volumes:
+      - kafka-data2:/var/lib/kafka/data
 
   rest-proxy:
     image: confluentinc/cp-kafka-rest:5.5.0
@@ -110,3 +122,10 @@ services:
 networks:
   kafka-net:
     driver: overlay
+
+volumes:
+  zk-data0:
+  zk-txn-logs0:
+  kafka-data0:
+  kafka-data1:
+  kafka-data2:
